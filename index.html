@@ -1,10 +1,373 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Lucky Love Tar Heart Card Game</title>
+
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+
+body{
+  margin:0;
+  min-height:100vh;
+  font-family:Arial,sans-serif;
+  color:white;
+  text-align:center;
+  overflow-x:hidden;
+  background:
+    radial-gradient(circle at 20% 10%,#ff8bd1 0%,transparent 28%),
+    radial-gradient(circle at 80% 20%,#61c9ff 0%,transparent 30%),
+    linear-gradient(135deg,#13051d,#38113d,#061a35);
+}
+
+.bg{
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  overflow:hidden;
+  z-index:0;
+}
+
+.float{
+  position:absolute;
+  bottom:-50px;
+  animation:floatUp linear infinite;
+  opacity:.55;
+}
+
+@keyframes floatUp{
+  to{transform:translateY(-120vh) rotate(360deg);opacity:0}
+}
+
+.app{
+  position:relative;
+  z-index:2;
+  max-width:540px;
+  margin:auto;
+  padding:16px 12px 38px;
+}
+
+.title{
+  font-size:32px;
+  font-weight:900;
+  margin-top:10px;
+  background:linear-gradient(90deg,#fff,#ffd1ec,#85dcff);
+  -webkit-background-clip:text;
+  color:transparent;
+}
+
+.sub{
+  color:#ffe0f3;
+  font-size:14px;
+}
+
+.panel{
+  margin-top:14px;
+  padding:16px;
+  border-radius:30px;
+  background:rgba(255,255,255,.13);
+  border:1px solid rgba(255,255,255,.25);
+  backdrop-filter:blur(18px);
+  box-shadow:0 25px 60px rgba(0,0,0,.35);
+}
+
+.stats{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:8px;
+}
+
+.stat{
+  padding:10px 5px;
+  border-radius:18px;
+  background:rgba(255,255,255,.15);
+}
+
+.stat small{
+  display:block;
+  color:#ffd6ec;
+  font-size:12px;
+}
+
+.stat b{
+  font-size:22px;
+}
+
+.timer-bar{
+  height:14px;
+  background:rgba(255,255,255,.22);
+  border-radius:999px;
+  overflow:hidden;
+  margin:14px 0;
+}
+
+.timer-fill{
+  height:100%;
+  width:100%;
+  background:linear-gradient(90deg,#ff3d9a,#ffd166,#38bdf8);
+  transition:.3s;
+}
+
+.bet-area{
+  padding:12px;
+  border-radius:24px;
+  background:rgba(255,255,255,.1);
+}
+
+button{
+  border:none;
+  border-radius:999px;
+  padding:12px 15px;
+  margin:5px;
+  font-size:15px;
+  font-weight:900;
+  color:white;
+  cursor:pointer;
+  background:linear-gradient(135deg,#ff3d9a,#8b5cf6);
+  box-shadow:0 8px 20px rgba(0,0,0,.25);
+}
+
+button:active{transform:scale(.94)}
+
+.bet-btn{
+  background:rgba(255,255,255,.18);
+  border:1px solid rgba(255,255,255,.25);
+}
+
+.bet-btn.selected{
+  background:linear-gradient(135deg,#ff3d9a,#38bdf8);
+  box-shadow:0 0 18px rgba(255,255,255,.6);
+}
+
+.arena{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  margin-top:14px;
+}
+
+.team{
+  min-height:278px;
+  border-radius:28px;
+  padding:12px;
+  position:relative;
+  overflow:hidden;
+  border:3px solid transparent;
+  transition:.25s;
+}
+
+.pink{
+  background:linear-gradient(160deg,#ff4fa3,#ffacd8);
+}
+
+.blue{
+  background:linear-gradient(160deg,#24a8ff,#9be7ff);
+}
+
+.team.active{
+  border-color:white;
+  transform:translateY(-4px);
+  box-shadow:0 0 30px rgba(255,255,255,.8);
+}
+
+.team.win{
+  animation:winGlow .8s infinite alternate;
+}
+
+@keyframes winGlow{
+  from{box-shadow:0 0 12px #fff}
+  to{box-shadow:0 0 35px #fff}
+}
+
+.char{
+  font-size:48px;
+  animation:bounce 1.5s infinite;
+}
+
+@keyframes bounce{
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(-8px)}
+}
+
+.team h2{
+  margin:5px 0;
+}
+
+.cards{
+  display:flex;
+  justify-content:center;
+  gap:7px;
+  min-height:78px;
+  margin:8px 0;
+}
+
+.card{
+  width:50px;
+  height:72px;
+  perspective:800px;
+}
+
+.card-inner{
+  width:100%;
+  height:100%;
+  position:relative;
+  transform-style:preserve-3d;
+  animation:flip .7s forwards;
+}
+
+@keyframes flip{
+  from{transform:rotateY(0deg) scale(.8)}
+  to{transform:rotateY(180deg) scale(1)}
+}
+
+.face{
+  position:absolute;
+  inset:0;
+  border-radius:13px;
+  backface-visibility:hidden;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:900;
+  font-size:21px;
+}
+
+.front{
+  background:linear-gradient(135deg,#7c3aed,#ff3d9a);
+}
+
+.back{
+  background:white;
+  color:#2d1835;
+  transform:rotateY(180deg);
+  border:2px solid white;
+}
+
+.score{
+  display:inline-block;
+  padding:7px 14px;
+  border-radius:999px;
+  background:rgba(255,255,255,.28);
+  font-weight:900;
+}
+
+.place-btn{
+  width:92%;
+  background:rgba(255,255,255,.25);
+  border:1px solid rgba(255,255,255,.4);
+}
+
+.msg{
+  min-height:48px;
+  margin-top:13px;
+  font-weight:900;
+  color:#fff1fa;
+}
+
+.heart-pop{
+  position:fixed;
+  z-index:99;
+  font-size:30px;
+  pointer-events:none;
+  animation:pop .9s forwards;
+}
+
+@keyframes pop{
+  0%{transform:scale(.5) translateY(0);opacity:1}
+  100%{transform:scale(1.8) translateY(-90px);opacity:0}
+}
+
+.notice{
+  font-size:12px;
+  color:#ffd8ef;
+  margin-top:8px;
+}
+
+@media(max-width:390px){
+  .title{font-size:27px}
+  .team{min-height:260px;padding:9px}
+  .card{width:44px;height:65px}
+}
+</style>
+</head>
+
+<body>
+
+<div class="bg" id="bg"></div>
+
+<div class="app">
+
+  <div class="title">💖 Lucky Love Tar 💙</div>
+  <div class="sub">Heart Card Battle | เกมไพ่หัวใจการ์ตูน</div>
+
+  <div class="panel">
+
+    <div class="stats">
+      <div class="stat">
+        <small>หัวใจทั้งหมด</small>
+        <b id="hearts">100</b>
+      </div>
+      <div class="stat">
+        <small>เวลารอบนี้</small>
+        <b id="time">20</b>
+      </div>
+      <div class="stat">
+        <small>เลือกวาง</small>
+        <b id="selectedBet">10</b>
+      </div>
+    </div>
+
+    <div class="timer-bar">
+      <div id="timerFill" class="timer-fill"></div>
+    </div>
+
+    <div class="bet-area">
+      <div>เลือกจำนวนหัวใจ</div>
+      <button class="bet-btn selected" id="b10" onclick="chooseBet(10)">10 💖</button>
+      <button class="bet-btn" id="b20" onclick="chooseBet(20)">20 💖</button>
+      <button class="bet-btn" id="b50" onclick="chooseBet(50)">50 💖</button>
+      <button class="bet-btn" id="b100" onclick="chooseBet(100)">100 💖</button>
+    </div>
+
+    <div class="arena">
+
+      <div id="pinkTeam" class="team pink">
+        <div class="char">🐰</div>
+        <h2>ทีมชมพู</h2>
+        <div class="cards" id="pinkCards"></div>
+        <div>แต้ม <span class="score" id="pinkScore">?</span></div>
+        <p>วางไว้: <b id="pinkBet">0</b> 💖</p>
+        <button class="place-btn" onclick="placeHeart('pink')">วางทีมชมพู</button>
+      </div>
+
+      <div id="blueTeam" class="team blue">
+        <div class="char">🐻</div>
+        <h2>ทีมฟ้า</h2>
+        <div class="cards" id="blueCards"></div>
+        <div>แต้ม <span class="score" id="blueScore">?</span></div>
+        <p>วางไว้: <b id="blueBet">0</b> 💖</p>
+        <button class="place-btn" onclick="placeHeart('blue')">วางทีมฟ้า</button>
+      </div>
+
+    </div>
+
+    <div class="msg" id="msg">เกมเริ่มอัตโนมัติ วางหัวใจได้เลย 💖</div>
+
+    <button onclick="resetGame()" style="background:#777">RESET GAME</button>
+    <div class="notice">เกมนี้ใช้หัวใจในเกมเท่านั้น ไม่เกี่ยวกับเงินจริง</div>
+
+  </div>
+</div>
+
 <script>
 let hearts = 100;
 let selectedBet = 10;
 let pinkBet = 0;
 let blueBet = 0;
 let timeLeft = 20;
-let playing = false;
+let roundRunning = true;
+let revealing = false;
 let timer = null;
 
 const heartsEl = document.getElementById("hearts");
@@ -12,13 +375,8 @@ const timeEl = document.getElementById("time");
 const selectedBetEl = document.getElementById("selectedBet");
 const pinkBetEl = document.getElementById("pinkBet");
 const blueBetEl = document.getElementById("blueBet");
-const msgEl = document.getElementById("msg");
 const timerFill = document.getElementById("timerFill");
-
-function goGame(){
-  document.getElementById("startScreen").classList.add("hidden");
-  document.getElementById("gameScreen").classList.remove("hidden");
-}
+const msgEl = document.getElementById("msg");
 
 function updateUI(){
   heartsEl.innerText = hearts;
@@ -31,56 +389,20 @@ function updateUI(){
 
 function chooseBet(n){
   selectedBet = n;
-  document.querySelectorAll(".bet-btn").forEach(b=>b.classList.remove("selected"));
-  document.getElementById("b"+n).classList.add("selected");
+  document.querySelectorAll(".bet-btn").forEach(btn => btn.classList.remove("selected"));
+  document.getElementById("b" + n).classList.add("selected");
   updateUI();
-}
-
-function startRound(){
-  if(hearts <= 0){
-    msg("หัวใจหมดแล้ว กด RESET เพื่อเริ่มใหม่ 💔");
-    return;
-  }
-
-  clearInterval(timer);
-  playing = true;
-  pinkBet = 0;
-  blueBet = 0;
-  timeLeft = 20;
-
-  document.getElementById("pinkCards").innerHTML = "";
-  document.getElementById("blueCards").innerHTML = "";
-  document.getElementById("pinkScore").innerText = "?";
-  document.getElementById("blueScore").innerText = "?";
-  document.getElementById("pinkTeam").classList.remove("selected","win-glow");
-  document.getElementById("blueTeam").classList.remove("selected","win-glow");
-
-  msg("เริ่มแล้ว! วางหัวใจฝั่งชมพูหรือฟ้า 💖");
-  updateUI();
-
-  timer = setInterval(()=>{
-    timeLeft--;
-    updateUI();
-
-    if(timeLeft <= 5 && timeLeft > 0){
-      msg("เหลือ " + timeLeft + " วิ รีบวางหัวใจเร็ว!");
-    }
-
-    if(timeLeft <= 0){
-      clearInterval(timer);
-      revealCards();
-    }
-  },1000);
 }
 
 function placeHeart(team){
-  if(!playing){
-    msg("กด START ROUND ก่อนนะ");
+  if(revealing){
+    msg("กำลังเปิดไพ่ รอรอบถัดไปนะ 💖");
     return;
   }
 
   if(hearts < selectedBet){
-    msg("หัวใจไม่พอ เลือกจำนวนที่น้อยลงนะ");
+    msg("หัวใจไม่พอ เลือกวางน้อยลงนะ");
+    shakeHeart();
     return;
   }
 
@@ -100,74 +422,226 @@ function placeHeart(team){
   updateUI();
 }
 
-function drawCard(){
-  const cards = [
-    {v:"A",p:1},{v:"2",p:2},{v:"3",p:3},{v:"4",p:4},{v:"5",p:5},
-    {v:"6",p:6},{v:"7",p:7},{v:"8",p:8},{v:"9",p:9},
-    {v:"10",p:0},{v:"J",p:0},{v:"Q",p:0},{v:"K",p:0}
-  ];
-  return cards[Math.floor(Math.random()*cards.length)];
+function startAutoTimer(){
+  clearInterval(timer);
+
+  timer = setInterval(() => {
+    if(revealing) return;
+
+    timeLeft--;
+    updateUI();
+
+    if(timeLeft === 10){
+      msg("เหลือ 10 วิ เลือกทีมที่ใช่ได้เลย ✨");
+    }
+
+    if(timeLeft <= 5 && timeLeft > 0){
+      msg("เหลือ " + timeLeft + " วิ รีบวางหัวใจเร็ว!");
+    }
+
+    if(timeLeft <= 0){
+      revealRound();
+    }
+  }, 1000);
 }
 
-function revealCards(){
-  playing = false;
+function newRound(){
+  revealing = false;
+  roundRunning = true;
+  pinkBet = 0;
+  blueBet = 0;
+  timeLeft = 20;
 
-  if(pinkBet === 0 && blueBet === 0){
-    msg("รอบนี้ยังไม่ได้วางหัวใจ เลยไม่มีผลนะ 💖");
+  document.getElementById("pinkCards").innerHTML = "";
+  document.getElementById("blueCards").innerHTML = "";
+  document.getElementById("pinkScore").innerText = "?";
+  document.getElementById("blueScore").innerText = "?";
+
+  document.getElementById("pinkTeam").classList.remove("active","win");
+  document.getElementById("blueTeam").classList.remove("active","win");
+
+  if(hearts <= 0){
+    msg("หัวใจหมดแล้ว กด RESET GAME เพื่อเริ่มใหม่ 💔");
+    clearInterval(timer);
     return;
   }
 
-  msg("หมดเวลา! เปิดไพ่แล้ว...");
+  msg("รอบใหม่เริ่มแล้ว วางหัวใจได้เลย 💖");
+  updateUI();
+}
 
-  const pink = [drawCard(), drawCard()];
-  const blue = [drawCard(), drawCard()];
+function revealRound(){
+  revealing = true;
+  roundRunning = false;
 
-  const pinkScore = (pink[0].p + pink[1].p) % 10;
-  const blueScore = (blue[0].p + blue[1].p) % 10;
+  if(pinkBet === 0 && blueBet === 0){
+    msg("รอบนี้ไม่ได้วางหัวใจ เริ่มรอบใหม่ให้อัตโนมัติ 💞");
+    setTimeout(newRound, 1800);
+    return;
+  }
 
-  showCardSet("pinkCards", pink);
-  showCardSet("blueCards", blue);
+  msg("หมดเวลา! การ์ตูนกำลังเปิดไพ่...");
 
-  setTimeout(()=>{
+  const pinkCards = [drawCard(), drawCard()];
+  const blueCards = [drawCard(), drawCard()];
+
+  const pinkScore = (pinkCards[0].point + pinkCards[1].point) % 10;
+  const blueScore = (blueCards[0].point + blueCards[1].point) % 10;
+
+  showCards("pinkCards", pinkCards);
+  showCards("blueCards", blueCards);
+
+  setTimeout(() => {
     document.getElementById("pinkScore").innerText = pinkScore;
     document.getElementById("blueScore").innerText = blueScore;
 
-    let reward = 0;
-
-    if(pinkScore > blueScore){
-      reward = pinkBet * 2;
-      hearts += reward;
-      document.getElementById("pinkTeam").classList.add("win-glow");
-      msg("ทีมชมพูชนะ! ได้คืน " + reward + " 💖 | กำไร +" + pinkBet);
-      bigHeartRain();
-    }
-    else if(blueScore > pinkScore){
-      reward = blueBet * 2;
-      hearts += reward;
-      document.getElementById("blueTeam").classList.add("win-glow");
-      msg("ทีมฟ้าชนะ! ได้คืน " + reward + " 💙 | กำไร +" + blueBet);
-      bigHeartRain();
-    }
-    else{
-      reward = pinkBet + blueBet;
-      hearts += reward;
-      msg("เสมอ! คืนหัวใจทั้งหมด " + reward + " 💞");
-      bigHeartRain();
-    }
-
-    updateUI();
-
-    if(hearts <= 0){
-      msg("หัวใจหมดแล้ว กด RESET เพื่อเริ่มใหม่ 💔");
-    }
-  },1400);
+    calculateResult(pinkScore, blueScore);
+  }, 1400);
 }
 
-function showCardSet(id,cards){
-  const box = document.getElementById(id);
+function drawCard(){
+  const deck = [
+    {name:"A", point:1},
+    {name:"2", point:2},
+    {name:"3", point:3},
+    {name:"4", point:4},
+    {name:"5", point:5},
+    {name:"6", point:6},
+    {name:"7", point:7},
+    {name:"8", point:8},
+    {name:"9", point:9},
+    {name:"10", point:0},
+    {name:"J", point:0},
+    {name:"Q", point:0},
+    {name:"K", point:0}
+  ];
+
+  return deck[Math.floor(Math.random() * deck.length)];
+}
+
+function showCards(boxId, cards){
+  const box = document.getElementById(boxId);
   box.innerHTML = "";
 
-  cards.forEach((c,i)=>{
-    setTimeout(()=>{
-      const card = document.createElement("div");
-      card.className
+  cards.forEach((card, index) => {
+    setTimeout(() => {
+      const div = document.createElement("div");
+      div.className = "card";
+      div.innerHTML = `
+        <div class="card-inner">
+          <div class="face front">💖</div>
+          <div class="face back">${card.name}</div>
+        </div>
+      `;
+      box.appendChild(div);
+    }, index * 450);
+  });
+}
+
+function calculateResult(pinkScore, blueScore){
+  let text = "";
+
+  if(pinkScore > blueScore){
+    const reward = pinkBet * 2;
+    hearts += reward;
+
+    document.getElementById("pinkTeam").classList.add("win");
+    text = "ทีมชมพูชนะ 🐰💗 ได้คืน " + reward + " หัวใจ | กำไร +" + pinkBet;
+    heartRain("💗");
+  }
+  else if(blueScore > pinkScore){
+    const reward = blueBet * 2;
+    hearts += reward;
+
+    document.getElementById("blueTeam").classList.add("win");
+    text = "ทีมฟ้าชนะ 🐻💙 ได้คืน " + reward + " หัวใจ | กำไร +" + blueBet;
+    heartRain("💙");
+  }
+  else{
+    const refund = pinkBet + blueBet;
+    hearts += refund;
+
+    text = "เสมอ 💞 คืนหัวใจทั้งหมด " + refund;
+    heartRain("💖");
+  }
+
+  msg(text);
+  updateUI();
+
+  setTimeout(newRound, 3500);
+}
+
+function flashTeam(id){
+  const el = document.getElementById(id);
+  el.classList.add("active");
+  setTimeout(() => el.classList.remove("active"), 420);
+}
+
+function msg(text){
+  msgEl.innerText = text;
+}
+
+function popHeart(symbol = "💖"){
+  const h = document.createElement("div");
+  h.className = "heart-pop";
+  h.innerText = symbol;
+  h.style.left = 35 + Math.random() * 30 + "vw";
+  h.style.top = 52 + Math.random() * 22 + "vh";
+  document.body.appendChild(h);
+  setTimeout(() => h.remove(), 900);
+}
+
+function heartRain(symbol){
+  for(let i = 0; i < 36; i++){
+    setTimeout(() => popHeart(symbol), i * 45);
+  }
+}
+
+function shakeHeart(){
+  heartsEl.style.transform = "scale(1.25)";
+  heartsEl.style.color = "#ffdf5c";
+  setTimeout(() => {
+    heartsEl.style.transform = "scale(1)";
+    heartsEl.style.color = "white";
+  }, 250);
+}
+
+function resetGame(){
+  clearInterval(timer);
+
+  hearts = 100;
+  selectedBet = 10;
+  pinkBet = 0;
+  blueBet = 0;
+  timeLeft = 20;
+  revealing = false;
+
+  chooseBet(10);
+  newRound();
+  startAutoTimer();
+
+  msg("รีเซ็ตแล้ว เกมเริ่มอัตโนมัติ วางหัวใจได้เลย 💖");
+}
+
+function createBackground(){
+  const bg = document.getElementById("bg");
+
+  for(let i = 0; i < 38; i++){
+    const f = document.createElement("div");
+    f.className = "float";
+    f.innerText = ["💖","💗","💙","💕","💘","✨"][Math.floor(Math.random()*6)];
+    f.style.left = Math.random() * 100 + "vw";
+    f.style.animationDuration = 6 + Math.random() * 8 + "s";
+    f.style.animationDelay = Math.random() * 8 + "s";
+    f.style.fontSize = 16 + Math.random() * 26 + "px";
+    bg.appendChild(f);
+  }
+}
+
+createBackground();
+updateUI();
+startAutoTimer();
+</script>
+
+</body>
+</html>
