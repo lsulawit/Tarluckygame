@@ -3,322 +3,246 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Lucky Love Tar Game</title>
+<title>Lucky Love Tar Card Game</title>
 <style>
 *{box-sizing:border-box}
 body{
-  margin:0;
-  font-family:Arial,sans-serif;
-  background:linear-gradient(135deg,#ffd6ea,#fff4fb);
-  color:#5a2a45;
-  text-align:center;
+  margin:0;min-height:100vh;font-family:Arial,sans-serif;color:white;text-align:center;
+  background:radial-gradient(circle at top,#ff9bd2,transparent 35%),
+  linear-gradient(135deg,#19001f,#42133f,#0b1638);
 }
-header{
-  padding:25px 15px;
-  background:#ff77b7;
-  color:white;
-  border-radius:0 0 30px 30px;
+.container{max-width:520px;margin:auto;padding:18px}
+h1{font-size:30px;margin:18px 0 6px}
+.panel{
+  background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.25);
+  border-radius:28px;padding:18px;margin-top:14px;backdrop-filter:blur(15px);
+  box-shadow:0 20px 50px rgba(0,0,0,.35)
 }
-h1{margin:0;font-size:30px}
-.menu,.game{
-  max-width:430px;
-  margin:18px auto;
-  padding:18px;
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.stat{background:rgba(255,255,255,.15);border-radius:18px;padding:10px}
+.stat small{display:block;color:#ffd5ec}.stat b{font-size:22px}
+.sides{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:15px}
+.side{
+  border-radius:24px;padding:14px;min-height:210px;border:3px solid transparent
 }
+.pink{background:linear-gradient(160deg,#ff4fa3,#ff9bd2)}
+.blue{background:linear-gradient(160deg,#41b6ff,#7dd3fc)}
+.side.active{border-color:#fff;box-shadow:0 0 25px #fff}
+.cards{display:flex;justify-content:center;gap:8px;margin:12px 0;min-height:82px}
 .card{
-  background:white;
-  border-radius:25px;
-  padding:20px;
-  box-shadow:0 10px 25px #ff9ccc66;
-  margin-bottom:15px;
+  width:52px;height:74px;border-radius:12px;background:white;color:#333;
+  display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:22px;
+  box-shadow:0 8px 16px rgba(0,0,0,.25)
 }
+.character{font-size:42px}
 button{
-  border:0;
-  border-radius:999px;
-  padding:12px 18px;
-  margin:7px;
-  font-size:16px;
-  background:#ff5ca8;
-  color:white;
-  cursor:pointer;
+  border:0;border-radius:999px;padding:12px 16px;margin:6px;
+  font-size:16px;font-weight:bold;color:white;background:#ff4fa3;cursor:pointer
 }
-button:hover{transform:scale(1.05)}
-.back{background:#999}
-.hidden{display:none}
-#catchArea{
-  height:330px;
-  background:#fff0f7;
-  border-radius:22px;
-  position:relative;
-  overflow:hidden;
-}
-.heart{
-  position:absolute;
-  font-size:34px;
-  cursor:pointer;
-  user-select:none;
-}
-.grid{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:10px;
-}
-.mem{
-  height:65px;
-  background:#ffb6d9;
-  border-radius:15px;
-  font-size:30px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-}
-#runNo{
-  position:relative;
-  background:#ddd;
-  color:#555;
-}
-input{
-  width:90%;
-  padding:14px;
-  border-radius:15px;
-  border:2px solid #ff9ccc;
-  font-size:17px;
-}
-.big{font-size:45px}
+button:active{transform:scale(.95)}
+.bet-btn{background:#7c3aed}
+.start{font-size:20px;padding:16px 28px;background:linear-gradient(135deg,#ff3d9a,#7c3aed)}
+.disabled{opacity:.45;pointer-events:none}
+.msg{min-height:38px;color:#ffe3f3;font-weight:bold}
 </style>
 </head>
 <body>
 
-<header>
-  <h1>💖 Lucky Love Tar 💖</h1>
-  <p>เกมรักสุดพิเศษสำหรับ Tar จาก Lucky</p>
-</header>
+<div class="container">
+  <h1>💖 Lucky Love Tar Card Battle 💙</h1>
+  <p>เกมไพ่การ์ตูน ใช้หัวใจในเกมเท่านั้น</p>
 
-<div id="menu" class="menu">
-  <div class="card">
-    <h2>เลือกเกมที่อยากเล่น</h2>
-    <button onclick="showGame('quiz')">1. แบบทดสอบความรัก</button>
-    <button onclick="showGame('catch')">2. จับหัวใจให้ทัน</button>
-    <button onclick="showGame('memory')">3. เกมจำคู่หัวใจ</button>
-    <button onclick="showGame('run')">4. ปุ่มไม่รักหนีได้</button>
-    <button onclick="showGame('type')">5. พิมพ์คำรัก</button>
-    <button onclick="showGame('mission')">6. ภารกิจสุ่มคู่รัก</button>
-  </div>
-</div>
+  <div class="panel">
+    <div class="stats">
+      <div class="stat"><small>หัวใจ</small><b id="heart">100</b></div>
+      <div class="stat"><small>เวลา</small><b id="time">20</b></div>
+      <div class="stat"><small>เดิมพันรอบนี้</small><b id="currentBet">0</b></div>
+    </div>
 
-<div id="quiz" class="game hidden">
-  <div class="card">
-    <h2>แบบทดสอบความรัก</h2>
-    <p id="qText"></p>
-    <div id="qBtns"></div>
-    <h3 id="qScore"></h3>
-    <button class="back" onclick="backMenu()">กลับเมนู</button>
-  </div>
-</div>
+    <h3>เลือกจำนวนหัวใจ</h3>
+    <button class="bet-btn" onclick="setBet(10)">10 💖</button>
+    <button class="bet-btn" onclick="setBet(20)">20 💖</button>
+    <button class="bet-btn" onclick="setBet(50)">50 💖</button>
+    <button class="bet-btn" onclick="setBet(100)">100 💖</button>
 
-<div id="catch" class="game hidden">
-  <div class="card">
-    <h2>จับหัวใจให้ครบ 10 ดวง</h2>
-    <p>คะแนน: <span id="catchScore">0</span></p>
-    <div id="catchArea"></div>
-    <button class="back" onclick="backMenu()">กลับเมนู</button>
-  </div>
-</div>
+    <h3>เลือกฝั่ง</h3>
+    <button onclick="placeBet('pink')">วางฝั่งชมพู 💗</button>
+    <button onclick="placeBet('blue')" style="background:#38bdf8">วางฝั่งฟ้า 💙</button>
 
-<div id="memory" class="game hidden">
-  <div class="card">
-    <h2>เกมจำคู่หัวใจ</h2>
-    <p id="memStatus">จับคู่ให้ครบ</p>
-    <div id="memGrid" class="grid"></div>
-    <button onclick="startMemory()">เริ่มใหม่</button>
-    <button class="back" onclick="backMenu()">กลับเมนู</button>
-  </div>
-</div>
+    <div class="sides">
+      <div id="pinkBox" class="side pink">
+        <div class="character">🐰</div>
+        <h2>ทีมชมพู</h2>
+        <div class="cards" id="pinkCards"></div>
+        <p>แต้ม: <b id="pinkScore">?</b></p>
+        <p>วางไว้: <b id="pinkBet">0</b> 💖</p>
+      </div>
 
-<div id="run" class="game hidden">
-  <div class="card">
-    <h2>Tar รัก Lucky ไหม?</h2>
-    <p class="big">🥺</p>
-    <button onclick="loveWin()">รักมากที่สุด</button>
-    <button id="runNo" onclick="moveNo()">ไม่รัก</button>
-    <h3 id="runMsg"></h3>
-    <button class="back" onclick="backMenu()">กลับเมนู</button>
-  </div>
-</div>
+      <div id="blueBox" class="side blue">
+        <div class="character">🐻</div>
+        <h2>ทีมฟ้า</h2>
+        <div class="cards" id="blueCards"></div>
+        <p>แต้ม: <b id="blueScore">?</b></p>
+        <p>วางไว้: <b id="blueBet">0</b> 💖</p>
+      </div>
+    </div>
 
-<div id="type" class="game hidden">
-  <div class="card">
-    <h2>พิมพ์คำลับให้ถูก</h2>
-    <p>พิมพ์ว่า: <b>Lucky Love Tar</b></p>
-    <input id="typeInput" placeholder="พิมพ์ตรงนี้">
-    <br>
-    <button onclick="checkType()">ตรวจคำตอบ</button>
-    <h3 id="typeMsg"></h3>
-    <button class="back" onclick="backMenu()">กลับเมนู</button>
-  </div>
-</div>
-
-<div id="mission" class="game hidden">
-  <div class="card">
-    <h2>ภารกิจสุ่มคู่รัก</h2>
-    <p id="missionText">กดสุ่มภารกิจเลย</p>
-    <button onclick="randomMission()">สุ่มภารกิจ</button>
-    <button class="back" onclick="backMenu()">กลับเมนู</button>
+    <p class="msg" id="msg">กดเริ่มเกม แล้ววางหัวใจภายใน 20 วินาที</p>
+    <button class="start" onclick="startRound()">START ROUND</button>
+    <button onclick="resetGame()" style="background:#999">รีเซ็ตเกม</button>
   </div>
 </div>
 
 <script>
-let currentGame="";
+let hearts = 100;
+let selectedBet = 10;
+let pinkBet = 0;
+let blueBet = 0;
+let timeLeft = 20;
+let timer = null;
+let playing = false;
 
-function showGame(id){
-  document.getElementById("menu").classList.add("hidden");
-  document.querySelectorAll(".game").forEach(g=>g.classList.add("hidden"));
-  document.getElementById(id).classList.remove("hidden");
-  currentGame=id;
-  if(id==="quiz") startQuiz();
-  if(id==="catch") startCatch();
-  if(id==="memory") startMemory();
+function update(){
+  document.getElementById("heart").innerText = hearts;
+  document.getElementById("time").innerText = timeLeft;
+  document.getElementById("currentBet").innerText = selectedBet;
+  document.getElementById("pinkBet").innerText = pinkBet;
+  document.getElementById("blueBet").innerText = blueBet;
 }
 
-function backMenu(){
-  document.querySelectorAll(".game").forEach(g=>g.classList.add("hidden"));
-  document.getElementById("menu").classList.remove("hidden");
-  currentGame="";
+function setBet(n){
+  selectedBet = n;
+  update();
 }
 
-/* Quiz */
-const questions=[
-  {q:"ใครน่ารักที่สุด?",a:["Lucky","Tar","ทั้งคู่"],c:2},
-  {q:"Lucky รัก Tar มากแค่ไหน?",a:["นิดเดียว","มากที่สุด","ไม่รู้"],c:1},
-  {q:"ถ้า Tar งอน Lucky ควรทำยังไง?",a:["ง้อทันที","หนี","แกล้งหลับ"],c:0},
-  {q:"คำว่า Lucky Love Tar คืออะไร?",a:["ชื่อเกม","คำสัญญา","ถูกทุกข้อ"],c:2}
-];
-let qi=0, qs=0;
-
-function startQuiz(){
-  qi=0; qs=0; showQ();
-}
-function showQ(){
-  if(qi>=questions.length){
-    document.getElementById("qText").innerHTML="จบเกมแล้ว 💖";
-    document.getElementById("qBtns").innerHTML="";
-    document.getElementById("qScore").innerHTML="คะแนนความรัก: "+qs+"/"+questions.length+" 💕";
+function placeBet(side){
+  if(!playing){
+    msg("ต้องกด START ROUND ก่อนนะ 💖");
     return;
   }
-  let q=questions[qi];
-  document.getElementById("qText").innerHTML=q.q;
-  document.getElementById("qBtns").innerHTML="";
-  q.a.forEach((x,i)=>{
-    let b=document.createElement("button");
-    b.innerText=x;
-    b.onclick=()=>{ if(i===q.c) qs++; qi++; showQ(); };
-    document.getElementById("qBtns").appendChild(b);
-  });
+  if(hearts < selectedBet){
+    msg("หัวใจไม่พอแล้ว ลองเลือกเบทน้อยลงนะ");
+    return;
+  }
+  hearts -= selectedBet;
+  if(side==="pink"){
+    pinkBet += selectedBet;
+    flash("pinkBox");
+  }else{
+    blueBet += selectedBet;
+    flash("blueBox");
+  }
+  msg("วางหัวใจสำเร็จ! วางเพิ่มได้จนกว่าเวลาจะหมด");
+  update();
 }
 
-/* Catch Heart */
-let catchScore=0, catchTimer;
-function startCatch(){
-  catchScore=0;
-  document.getElementById("catchScore").innerText=0;
-  document.getElementById("catchArea").innerHTML="";
-  clearInterval(catchTimer);
-  catchTimer=setInterval(createCatchHeart,700);
-}
-function createCatchHeart(){
-  if(currentGame!=="catch") return clearInterval(catchTimer);
-  const area=document.getElementById("catchArea");
-  const h=document.createElement("div");
-  h.className="heart";
-  h.innerText="💖";
-  h.style.left=Math.random()*85+"%";
-  h.style.top=Math.random()*85+"%";
-  h.onclick=()=>{
-    catchScore++;
-    document.getElementById("catchScore").innerText=catchScore;
-    h.remove();
-    if(catchScore>=10){
-      clearInterval(catchTimer);
-      area.innerHTML="<h2>ชนะแล้ว! Tar ได้หัวใจ Lucky ครบแล้ว 💘</h2>";
+function startRound(){
+  clearInterval(timer);
+  playing = true;
+  pinkBet = 0;
+  blueBet = 0;
+  timeLeft = 20;
+  document.getElementById("pinkCards").innerHTML = "";
+  document.getElementById("blueCards").innerHTML = "";
+  document.getElementById("pinkScore").innerText = "?";
+  document.getElementById("blueScore").innerText = "?";
+  msg("เริ่มแล้ว! รีบวางหัวใจให้ทัน ⏳");
+  update();
+
+  timer = setInterval(()=>{
+    timeLeft--;
+    update();
+    if(timeLeft <= 0){
+      clearInterval(timer);
+      revealCards();
     }
-  };
-  area.appendChild(h);
-  setTimeout(()=>h.remove(),1200);
+  },1000);
 }
 
-/* Memory */
-let first=null, lock=false, matched=0;
-function startMemory(){
-  const icons=["💖","💖","🌹","🌹","💍","💍","🥰","🥰","🍓","🍓","🐻","🐻","⭐","⭐","🎁","🎁"];
-  icons.sort(()=>Math.random()-0.5);
-  const grid=document.getElementById("memGrid");
-  grid.innerHTML="";
-  first=null; matched=0; lock=false;
-  document.getElementById("memStatus").innerText="จับคู่ให้ครบ";
-  icons.forEach(icon=>{
-    let d=document.createElement("div");
-    d.className="mem";
-    d.dataset.icon=icon;
-    d.innerText="?";
-    d.onclick=()=>flip(d);
-    grid.appendChild(d);
+function drawCard(){
+  const values = ["A","2","3","4","5","6","7","8","9","10","J","Q","K"];
+  const v = values[Math.floor(Math.random()*values.length)];
+  let point = 0;
+  if(v==="A") point = 1;
+  else if(["10","J","Q","K"].includes(v)) point = 0;
+  else point = Number(v);
+  return {v, point};
+}
+
+function revealCards(){
+  playing = false;
+
+  const pink = [drawCard(), drawCard()];
+  const blue = [drawCard(), drawCard()];
+
+  let pinkScore = (pink[0].point + pink[1].point) % 10;
+  let blueScore = (blue[0].point + blue[1].point) % 10;
+
+  showCards("pinkCards", pink);
+  showCards("blueCards", blue);
+
+  document.getElementById("pinkScore").innerText = pinkScore;
+  document.getElementById("blueScore").innerText = blueScore;
+
+  if(pinkScore > blueScore){
+    hearts += pinkBet * 2;
+    msg("ทีมชมพูชนะ! 🐰💗 ได้หัวใจคืน x2");
+    flash("pinkBox");
+  }else if(blueScore > pinkScore){
+    hearts += blueBet * 2;
+    msg("ทีมฟ้าชนะ! 🐻💙 ได้หัวใจคืน x2");
+    flash("blueBox");
+  }else{
+    hearts += pinkBet + blueBet;
+    msg("เสมอ! คืนหัวใจทั้งหมด 💞");
+  }
+
+  if(hearts <= 0){
+    msg("หัวใจหมดแล้ว กดรีเซ็ตเพื่อเริ่มใหม่ 💔");
+  }
+  update();
+}
+
+function showCards(id,cards){
+  const box = document.getElementById(id);
+  box.innerHTML = "";
+  cards.forEach((c,i)=>{
+    setTimeout(()=>{
+      const div = document.createElement("div");
+      div.className = "card";
+      div.innerText = c.v;
+      box.appendChild(div);
+    },i*450);
   });
 }
-function flip(card){
-  if(lock||card.innerText!=="?") return;
-  card.innerText=card.dataset.icon;
-  if(!first){ first=card; return; }
-  if(first.dataset.icon===card.dataset.icon){
-    matched+=2;
-    first=null;
-    if(matched===16) document.getElementById("memStatus").innerText="ชนะแล้ว รักกันครบทุกคู่ 💖";
-  }else{
-    lock=true;
-    setTimeout(()=>{
-      card.innerText="?";
-      first.innerText="?";
-      first=null;
-      lock=false;
-    },700);
-  }
+
+function flash(id){
+  const el = document.getElementById(id);
+  el.classList.add("active");
+  setTimeout(()=>el.classList.remove("active"),500);
 }
 
-/* Run No */
-function moveNo(){
-  const b=document.getElementById("runNo");
-  b.style.position="fixed";
-  b.style.left=Math.random()*(window.innerWidth-90)+"px";
-  b.style.top=Math.random()*(window.innerHeight-60)+"px";
-}
-function loveWin(){
-  document.getElementById("runMsg").innerText="เย้! Lucky กับ Tar รักกันที่สุดในโลก 💖";
+function msg(t){
+  document.getElementById("msg").innerText = t;
 }
 
-/* Type */
-function checkType(){
-  const v=document.getElementById("typeInput").value.trim();
-  if(v==="Lucky Love Tar"){
-    document.getElementById("typeMsg").innerText="ถูกต้อง! เปิดหัวใจสำเร็จ 💘";
-  }else{
-    document.getElementById("typeMsg").innerText="ยังไม่ถูก ลองพิมพ์ใหม่อีกครั้งนะ";
-  }
+function resetGame(){
+  clearInterval(timer);
+  hearts = 100;
+  selectedBet = 10;
+  pinkBet = 0;
+  blueBet = 0;
+  timeLeft = 20;
+  playing = false;
+  document.getElementById("pinkCards").innerHTML = "";
+  document.getElementById("blueCards").innerHTML = "";
+  document.getElementById("pinkScore").innerText = "?";
+  document.getElementById("blueScore").innerText = "?";
+  msg("รีเซ็ตแล้ว เริ่มใหม่ได้เลย 💖");
+  update();
 }
 
-/* Mission */
-const missions=[
-  "พูดคำว่า รักนะ 3 ครั้ง 💕",
-  "ส่งอีโมจิหัวใจให้กัน 10 ดวง 💖",
-  "เล่าเหตุผลที่รักอีกฝ่าย 1 ข้อ 🥰",
-  "จับมือกัน 10 วินาที 🤝",
-  "ถ่ายรูปคู่ 1 รูป 📸",
-  "ให้ Tar บอกข้อดีของ Lucky 1 ข้อ 🌷",
-  "ให้ Lucky บอกข้อดีของ Tar 1 ข้อ ⭐",
-  "กอดกันแบบอบอุ่น 1 ครั้ง 🧸"
-];
-function randomMission(){
-  const m=missions[Math.floor(Math.random()*missions.length)];
-  document.getElementById("missionText").innerText=m;
-}
+update();
 </script>
 
 </body>
