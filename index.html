@@ -3,324 +3,108 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Lucky Love Tar Heart Card Game</title>
-
+<title>Lucky Love Tar Game Hub</title>
 <style>
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-
 body{
-  margin:0;
-  min-height:100vh;
-  font-family:Arial,sans-serif;
-  color:white;
-  text-align:center;
-  overflow-x:hidden;
-  background:
-    radial-gradient(circle at 20% 10%,#ff8bd1 0%,transparent 28%),
-    radial-gradient(circle at 80% 20%,#61c9ff 0%,transparent 30%),
-    linear-gradient(135deg,#13051d,#38113d,#061a35);
+  margin:0;min-height:100vh;font-family:Arial,sans-serif;color:white;text-align:center;overflow-x:hidden;
+  background:radial-gradient(circle at 20% 10%,#ff8bd1 0%,transparent 28%),
+  radial-gradient(circle at 80% 20%,#61c9ff 0%,transparent 30%),
+  linear-gradient(135deg,#13051d,#38113d,#061a35);
 }
-
-.bg{
-  position:fixed;
-  inset:0;
-  pointer-events:none;
-  overflow:hidden;
-  z-index:0;
-}
-
-.float{
-  position:absolute;
-  bottom:-50px;
-  animation:floatUp linear infinite;
-  opacity:.55;
-}
-
-@keyframes floatUp{
-  to{transform:translateY(-120vh) rotate(360deg);opacity:0}
-}
-
-.app{
-  position:relative;
-  z-index:2;
-  max-width:540px;
-  margin:auto;
-  padding:16px 12px 38px;
-}
-
-.title{
-  font-size:32px;
-  font-weight:900;
-  margin-top:10px;
-  background:linear-gradient(90deg,#fff,#ffd1ec,#85dcff);
-  -webkit-background-clip:text;
-  color:transparent;
-}
-
-.sub{
-  color:#ffe0f3;
-  font-size:14px;
-}
-
-.panel{
-  margin-top:14px;
-  padding:16px;
-  border-radius:30px;
-  background:rgba(255,255,255,.13);
-  border:1px solid rgba(255,255,255,.25);
-  backdrop-filter:blur(18px);
-  box-shadow:0 25px 60px rgba(0,0,0,.35);
-}
-
-.stats{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:8px;
-}
-
-.stat{
-  padding:10px 5px;
-  border-radius:18px;
-  background:rgba(255,255,255,.15);
-}
-
-.stat small{
-  display:block;
-  color:#ffd6ec;
-  font-size:12px;
-}
-
-.stat b{
-  font-size:22px;
-}
-
-.timer-bar{
-  height:14px;
-  background:rgba(255,255,255,.22);
-  border-radius:999px;
-  overflow:hidden;
-  margin:14px 0;
-}
-
-.timer-fill{
-  height:100%;
-  width:100%;
-  background:linear-gradient(90deg,#ff3d9a,#ffd166,#38bdf8);
-  transition:.3s;
-}
-
-.bet-area{
-  padding:12px;
-  border-radius:24px;
-  background:rgba(255,255,255,.1);
-}
-
-button{
-  border:none;
-  border-radius:999px;
-  padding:12px 15px;
-  margin:5px;
-  font-size:15px;
-  font-weight:900;
-  color:white;
-  cursor:pointer;
-  background:linear-gradient(135deg,#ff3d9a,#8b5cf6);
-  box-shadow:0 8px 20px rgba(0,0,0,.25);
-}
-
+.bg{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:0}
+.float{position:absolute;bottom:-50px;animation:floatUp linear infinite;opacity:.55}
+@keyframes floatUp{to{transform:translateY(-120vh) rotate(360deg);opacity:0}}
+.app{position:relative;z-index:2;max-width:560px;margin:auto;padding:16px 12px 38px}
+.title{font-size:32px;font-weight:900;margin-top:10px;background:linear-gradient(90deg,#fff,#ffd1ec,#85dcff);-webkit-background-clip:text;color:transparent}
+.sub{color:#ffe0f3;font-size:14px}
+.panel{margin-top:14px;padding:16px;border-radius:30px;background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.25);backdrop-filter:blur(18px);box-shadow:0 25px 60px rgba(0,0,0,.35)}
+.hidden{display:none}
+button{border:none;border-radius:999px;padding:12px 15px;margin:5px;font-size:15px;font-weight:900;color:white;cursor:pointer;background:linear-gradient(135deg,#ff3d9a,#8b5cf6);box-shadow:0 8px 20px rgba(0,0,0,.25)}
 button:active{transform:scale(.94)}
-
-.bet-btn{
-  background:rgba(255,255,255,.18);
-  border:1px solid rgba(255,255,255,.25);
-}
-
-.bet-btn.selected{
-  background:linear-gradient(135deg,#ff3d9a,#38bdf8);
-  box-shadow:0 0 18px rgba(255,255,255,.6);
-}
-
-.arena{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:10px;
-  margin-top:14px;
-}
-
-.team{
-  min-height:278px;
-  border-radius:28px;
-  padding:12px;
-  position:relative;
-  overflow:hidden;
-  border:3px solid transparent;
-  transition:.25s;
-}
-
-.pink{
-  background:linear-gradient(160deg,#ff4fa3,#ffacd8);
-}
-
-.blue{
-  background:linear-gradient(160deg,#24a8ff,#9be7ff);
-}
-
-.team.active{
-  border-color:white;
-  transform:translateY(-4px);
-  box-shadow:0 0 30px rgba(255,255,255,.8);
-}
-
-.team.win{
-  animation:winGlow .8s infinite alternate;
-}
-
-@keyframes winGlow{
-  from{box-shadow:0 0 12px #fff}
-  to{box-shadow:0 0 35px #fff}
-}
-
-.char{
-  font-size:48px;
-  animation:bounce 1.5s infinite;
-}
-
-@keyframes bounce{
-  0%,100%{transform:translateY(0)}
-  50%{transform:translateY(-8px)}
-}
-
-.team h2{
-  margin:5px 0;
-}
-
-.cards{
-  display:flex;
-  justify-content:center;
-  gap:7px;
-  min-height:78px;
-  margin:8px 0;
-}
-
-.card{
-  width:50px;
-  height:72px;
-  perspective:800px;
-}
-
-.card-inner{
-  width:100%;
-  height:100%;
-  position:relative;
-  transform-style:preserve-3d;
-  animation:flip .7s forwards;
-}
-
-@keyframes flip{
-  from{transform:rotateY(0deg) scale(.8)}
-  to{transform:rotateY(180deg) scale(1)}
-}
-
-.face{
-  position:absolute;
-  inset:0;
-  border-radius:13px;
-  backface-visibility:hidden;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-weight:900;
-  font-size:21px;
-}
-
-.front{
-  background:linear-gradient(135deg,#7c3aed,#ff3d9a);
-}
-
-.back{
-  background:white;
-  color:#2d1835;
-  transform:rotateY(180deg);
-  border:2px solid white;
-}
-
-.score{
-  display:inline-block;
-  padding:7px 14px;
-  border-radius:999px;
-  background:rgba(255,255,255,.28);
-  font-weight:900;
-}
-
-.place-btn{
-  width:92%;
-  background:rgba(255,255,255,.25);
-  border:1px solid rgba(255,255,255,.4);
-}
-
-.msg{
-  min-height:48px;
-  margin-top:13px;
-  font-weight:900;
-  color:#fff1fa;
-}
-
-.heart-pop{
-  position:fixed;
-  z-index:99;
-  font-size:30px;
-  pointer-events:none;
-  animation:pop .9s forwards;
-}
-
-@keyframes pop{
-  0%{transform:scale(.5) translateY(0);opacity:1}
-  100%{transform:scale(1.8) translateY(-90px);opacity:0}
-}
-
-.notice{
-  font-size:12px;
-  color:#ffd8ef;
-  margin-top:8px;
-}
-
+.heart-top{font-size:22px;font-weight:900;background:rgba(255,255,255,.16);padding:12px;border-radius:22px;margin-top:12px}
+.menu-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:16px}
+.menu-card{padding:20px;border-radius:28px;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.25);box-shadow:0 15px 35px rgba(0,0,0,.25)}
+.menu-icon{font-size:58px;animation:bounce 1.5s infinite}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.stat{padding:10px 5px;border-radius:18px;background:rgba(255,255,255,.15)}
+.stat small{display:block;color:#ffd6ec;font-size:12px}
+.stat b{font-size:22px}
+.timer-bar{height:14px;background:rgba(255,255,255,.22);border-radius:999px;overflow:hidden;margin:14px 0}
+.timer-fill{height:100%;width:100%;background:linear-gradient(90deg,#ff3d9a,#ffd166,#38bdf8);transition:.3s}
+.bet-area{padding:12px;border-radius:24px;background:rgba(255,255,255,.1)}
+.bet-btn{background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.25)}
+.bet-btn.selected{background:linear-gradient(135deg,#ff3d9a,#38bdf8);box-shadow:0 0 18px rgba(255,255,255,.6)}
+.arena{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+.team{min-height:278px;border-radius:28px;padding:12px;position:relative;overflow:hidden;border:3px solid transparent;transition:.25s}
+.pink{background:linear-gradient(160deg,#ff4fa3,#ffacd8)}
+.blue{background:linear-gradient(160deg,#24a8ff,#9be7ff)}
+.team.active{border-color:white;transform:translateY(-4px);box-shadow:0 0 30px rgba(255,255,255,.8)}
+.team.win{animation:winGlow .8s infinite alternate}
+@keyframes winGlow{from{box-shadow:0 0 12px #fff}to{box-shadow:0 0 35px #fff}}
+.char{font-size:48px;animation:bounce 1.5s infinite}
+.cards{display:flex;justify-content:center;gap:7px;min-height:78px;margin:8px 0}
+.card{width:50px;height:72px;perspective:800px}
+.card-inner{width:100%;height:100%;position:relative;transform-style:preserve-3d;animation:flip .7s forwards}
+@keyframes flip{from{transform:rotateY(0deg) scale(.8)}to{transform:rotateY(180deg) scale(1)}}
+.face{position:absolute;inset:0;border-radius:13px;backface-visibility:hidden;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:21px}
+.front{background:linear-gradient(135deg,#7c3aed,#ff3d9a)}
+.back{background:white;color:#2d1835;transform:rotateY(180deg);border:2px solid white}
+.score{display:inline-block;padding:7px 14px;border-radius:999px;background:rgba(255,255,255,.28);font-weight:900}
+.place-btn{width:92%;background:rgba(255,255,255,.25);border:1px solid rgba(255,255,255,.4)}
+.msg{min-height:48px;margin-top:13px;font-weight:900;color:#fff1fa}
+.heart-pop{position:fixed;z-index:99;font-size:30px;pointer-events:none;animation:pop .9s forwards}
+@keyframes pop{0%{transform:scale(.5) translateY(0);opacity:1}100%{transform:scale(1.8) translateY(-90px);opacity:0}}
+.memory-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:16px}
+.mem-card{aspect-ratio:1/1;border-radius:20px;background:linear-gradient(135deg,#ff4fa3,#7c3aed);display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:900;box-shadow:0 10px 20px rgba(0,0,0,.28);cursor:pointer;transition:.25s}
+.mem-card.open,.mem-card.done{background:white;color:#ff3d9a;transform:scale(1.05)}
+.mem-card.done{box-shadow:0 0 25px rgba(255,255,255,.8)}
+.back-btn{background:#777}
+.notice{font-size:12px;color:#ffd8ef;margin-top:8px}
 @media(max-width:390px){
-  .title{font-size:27px}
-  .team{min-height:260px;padding:9px}
-  .card{width:44px;height:65px}
+  .title{font-size:27px}.team{min-height:260px;padding:9px}.card{width:44px;height:65px}.menu-grid{grid-template-columns:1fr}
 }
 </style>
 </head>
 
 <body>
-
 <div class="bg" id="bg"></div>
 
 <div class="app">
-
   <div class="title">💖 Lucky Love Tar 💙</div>
-  <div class="sub">Heart Card Battle | เกมไพ่หัวใจการ์ตูน</div>
+  <div class="sub">Game Hub | หัวใจใช้ร่วมกันทุกเกม</div>
+  <div class="heart-top">หัวใจทั้งหมด: <span id="globalHearts">100</span> 💖</div>
 
-  <div class="panel">
+  <div id="menuScreen" class="panel">
+    <h2>เลือกเกมที่อยากเล่น</h2>
+    <div class="menu-grid">
+      <div class="menu-card">
+        <div class="menu-icon">🃏</div>
+        <h3>Heart Card Battle</h3>
+        <p>เกมไพ่หัวใจ ชมพู vs ฟ้า เวลาเดินอัตโนมัติ</p>
+        <button onclick="openCardGame()">เล่นเกมไพ่</button>
+      </div>
+      <div class="menu-card">
+        <div class="menu-icon">💘</div>
+        <h3>Memory Heart</h3>
+        <p>จับคู่หัวใจให้ครบ ชนะรับ 100 หัวใจ</p>
+        <button onclick="openMemoryGame()">เล่นเกมจับคู่</button>
+      </div>
+    </div>
+    <div class="notice">เกมนี้ใช้หัวใจในเกมเท่านั้น ไม่เกี่ยวกับเงินจริง</div>
+  </div>
+
+  <div id="cardGame" class="panel hidden">
+    <button class="back-btn" onclick="backMenu()">กลับหน้าเลือกเกม</button>
 
     <div class="stats">
-      <div class="stat">
-        <small>หัวใจทั้งหมด</small>
-        <b id="hearts">100</b>
-      </div>
-      <div class="stat">
-        <small>เวลารอบนี้</small>
-        <b id="time">20</b>
-      </div>
-      <div class="stat">
-        <small>เลือกวาง</small>
-        <b id="selectedBet">10</b>
-      </div>
+      <div class="stat"><small>หัวใจทั้งหมด</small><b id="hearts">100</b></div>
+      <div class="stat"><small>เวลารอบนี้</small><b id="time">20</b></div>
+      <div class="stat"><small>เลือกวาง</small><b id="selectedBet">10</b></div>
     </div>
 
-    <div class="timer-bar">
-      <div id="timerFill" class="timer-fill"></div>
-    </div>
+    <div class="timer-bar"><div id="timerFill" class="timer-fill"></div></div>
 
     <div class="bet-area">
       <div>เลือกจำนวนหัวใจ</div>
@@ -331,7 +115,6 @@ button:active{transform:scale(.94)}
     </div>
 
     <div class="arena">
-
       <div id="pinkTeam" class="team pink">
         <div class="char">🐰</div>
         <h2>ทีมชมพู</h2>
@@ -349,14 +132,24 @@ button:active{transform:scale(.94)}
         <p>วางไว้: <b id="blueBet">0</b> 💖</p>
         <button class="place-btn" onclick="placeHeart('blue')">วางทีมฟ้า</button>
       </div>
-
     </div>
 
     <div class="msg" id="msg">เกมเริ่มอัตโนมัติ วางหัวใจได้เลย 💖</div>
-
     <button onclick="resetGame()" style="background:#777">RESET GAME</button>
-    <div class="notice">เกมนี้ใช้หัวใจในเกมเท่านั้น ไม่เกี่ยวกับเงินจริง</div>
+  </div>
 
+  <div id="memoryGame" class="panel hidden">
+    <button class="back-btn" onclick="backMenu()">กลับหน้าเลือกเกม</button>
+    <h2>💘 Memory Heart</h2>
+    <p>จับคู่ให้ครบทั้งหมด ชนะแล้วรับ 100 หัวใจ</p>
+    <div class="stats">
+      <div class="stat"><small>คู่ที่จับได้</small><b id="memPair">0/8</b></div>
+      <div class="stat"><small>ครั้งที่เปิด</small><b id="memMove">0</b></div>
+      <div class="stat"><small>รางวัล</small><b>100</b></div>
+    </div>
+    <div id="memoryGrid" class="memory-grid"></div>
+    <div class="msg" id="memoryMsg">กดการ์ด 2 ใบเพื่อจับคู่</div>
+    <button onclick="startMemory()">เริ่มเกมจับคู่ใหม่</button>
   </div>
 </div>
 
@@ -366,10 +159,11 @@ let selectedBet = 10;
 let pinkBet = 0;
 let blueBet = 0;
 let timeLeft = 20;
-let roundRunning = true;
 let revealing = false;
 let timer = null;
+let currentScreen = "menu";
 
+const globalHearts = document.getElementById("globalHearts");
 const heartsEl = document.getElementById("hearts");
 const timeEl = document.getElementById("time");
 const selectedBetEl = document.getElementById("selectedBet");
@@ -378,8 +172,41 @@ const blueBetEl = document.getElementById("blueBet");
 const timerFill = document.getElementById("timerFill");
 const msgEl = document.getElementById("msg");
 
+function syncHearts(){
+  globalHearts.innerText = hearts;
+  if(heartsEl) heartsEl.innerText = hearts;
+}
+
+function showOnly(id){
+  document.getElementById("menuScreen").classList.add("hidden");
+  document.getElementById("cardGame").classList.add("hidden");
+  document.getElementById("memoryGame").classList.add("hidden");
+  document.getElementById(id).classList.remove("hidden");
+}
+
+function openCardGame(){
+  currentScreen = "card";
+  showOnly("cardGame");
+  newRound();
+  startAutoTimer();
+}
+
+function openMemoryGame(){
+  currentScreen = "memory";
+  clearInterval(timer);
+  showOnly("memoryGame");
+  startMemory();
+}
+
+function backMenu(){
+  currentScreen = "menu";
+  clearInterval(timer);
+  showOnly("menuScreen");
+  syncHearts();
+}
+
 function updateUI(){
-  heartsEl.innerText = hearts;
+  syncHearts();
   timeEl.innerText = timeLeft;
   selectedBetEl.innerText = selectedBet;
   pinkBetEl.innerText = pinkBet;
@@ -395,16 +222,8 @@ function chooseBet(n){
 }
 
 function placeHeart(team){
-  if(revealing){
-    msg("กำลังเปิดไพ่ รอรอบถัดไปนะ 💖");
-    return;
-  }
-
-  if(hearts < selectedBet){
-    msg("หัวใจไม่พอ เลือกวางน้อยลงนะ");
-    shakeHeart();
-    return;
-  }
+  if(revealing){msg("กำลังเปิดไพ่ รอรอบถัดไปนะ 💖");return;}
+  if(hearts < selectedBet){msg("หัวใจไม่พอ เลือกวางน้อยลงนะ");shakeHeart();return;}
 
   hearts -= selectedBet;
 
@@ -424,30 +243,21 @@ function placeHeart(team){
 
 function startAutoTimer(){
   clearInterval(timer);
-
   timer = setInterval(() => {
+    if(currentScreen !== "card") return;
     if(revealing) return;
 
     timeLeft--;
     updateUI();
 
-    if(timeLeft === 10){
-      msg("เหลือ 10 วิ เลือกทีมที่ใช่ได้เลย ✨");
-    }
-
-    if(timeLeft <= 5 && timeLeft > 0){
-      msg("เหลือ " + timeLeft + " วิ รีบวางหัวใจเร็ว!");
-    }
-
-    if(timeLeft <= 0){
-      revealRound();
-    }
+    if(timeLeft === 10) msg("เหลือ 10 วิ เลือกทีมที่ใช่ได้เลย ✨");
+    if(timeLeft <= 5 && timeLeft > 0) msg("เหลือ " + timeLeft + " วิ รีบวางหัวใจเร็ว!");
+    if(timeLeft <= 0) revealRound();
   }, 1000);
 }
 
 function newRound(){
   revealing = false;
-  roundRunning = true;
   pinkBet = 0;
   blueBet = 0;
   timeLeft = 20;
@@ -456,12 +266,11 @@ function newRound(){
   document.getElementById("blueCards").innerHTML = "";
   document.getElementById("pinkScore").innerText = "?";
   document.getElementById("blueScore").innerText = "?";
-
   document.getElementById("pinkTeam").classList.remove("active","win");
   document.getElementById("blueTeam").classList.remove("active","win");
 
   if(hearts <= 0){
-    msg("หัวใจหมดแล้ว กด RESET GAME เพื่อเริ่มใหม่ 💔");
+    msg("หัวใจหมดแล้ว เล่นเกมจับคู่เพื่อรับหัวใจเพิ่มได้ 💔");
     clearInterval(timer);
     return;
   }
@@ -472,7 +281,6 @@ function newRound(){
 
 function revealRound(){
   revealing = true;
-  roundRunning = false;
 
   if(pinkBet === 0 && blueBet === 0){
     msg("รอบนี้ไม่ได้วางหัวใจ เริ่มรอบใหม่ให้อัตโนมัติ 💞");
@@ -484,7 +292,6 @@ function revealRound(){
 
   const pinkCards = [drawCard(), drawCard()];
   const blueCards = [drawCard(), drawCard()];
-
   const pinkScore = (pinkCards[0].point + pinkCards[1].point) % 10;
   const blueScore = (blueCards[0].point + blueCards[1].point) % 10;
 
@@ -494,35 +301,22 @@ function revealRound(){
   setTimeout(() => {
     document.getElementById("pinkScore").innerText = pinkScore;
     document.getElementById("blueScore").innerText = blueScore;
-
     calculateResult(pinkScore, blueScore);
   }, 1400);
 }
 
 function drawCard(){
   const deck = [
-    {name:"A", point:1},
-    {name:"2", point:2},
-    {name:"3", point:3},
-    {name:"4", point:4},
-    {name:"5", point:5},
-    {name:"6", point:6},
-    {name:"7", point:7},
-    {name:"8", point:8},
-    {name:"9", point:9},
-    {name:"10", point:0},
-    {name:"J", point:0},
-    {name:"Q", point:0},
-    {name:"K", point:0}
+    {name:"A", point:1},{name:"2", point:2},{name:"3", point:3},{name:"4", point:4},
+    {name:"5", point:5},{name:"6", point:6},{name:"7", point:7},{name:"8", point:8},
+    {name:"9", point:9},{name:"10", point:0},{name:"J", point:0},{name:"Q", point:0},{name:"K", point:0}
   ];
-
   return deck[Math.floor(Math.random() * deck.length)];
 }
 
 function showCards(boxId, cards){
   const box = document.getElementById(boxId);
   box.innerHTML = "";
-
   cards.forEach((card, index) => {
     setTimeout(() => {
       const div = document.createElement("div");
@@ -531,8 +325,7 @@ function showCards(boxId, cards){
         <div class="card-inner">
           <div class="face front">💖</div>
           <div class="face back">${card.name}</div>
-        </div>
-      `;
+        </div>`;
       box.appendChild(div);
     }, index * 450);
   });
@@ -544,30 +337,24 @@ function calculateResult(pinkScore, blueScore){
   if(pinkScore > blueScore){
     const reward = pinkBet * 2;
     hearts += reward;
-
     document.getElementById("pinkTeam").classList.add("win");
     text = "ทีมชมพูชนะ 🐰💗 ได้คืน " + reward + " หัวใจ | กำไร +" + pinkBet;
     heartRain("💗");
-  }
-  else if(blueScore > pinkScore){
+  }else if(blueScore > pinkScore){
     const reward = blueBet * 2;
     hearts += reward;
-
     document.getElementById("blueTeam").classList.add("win");
     text = "ทีมฟ้าชนะ 🐻💙 ได้คืน " + reward + " หัวใจ | กำไร +" + blueBet;
     heartRain("💙");
-  }
-  else{
+  }else{
     const refund = pinkBet + blueBet;
     hearts += refund;
-
     text = "เสมอ 💞 คืนหัวใจทั้งหมด " + refund;
     heartRain("💖");
   }
 
   msg(text);
   updateUI();
-
   setTimeout(newRound, 3500);
 }
 
@@ -577,9 +364,7 @@ function flashTeam(id){
   setTimeout(() => el.classList.remove("active"), 420);
 }
 
-function msg(text){
-  msgEl.innerText = text;
-}
+function msg(text){msgEl.innerText = text;}
 
 function popHeart(symbol = "💖"){
   const h = document.createElement("div");
@@ -592,40 +377,125 @@ function popHeart(symbol = "💖"){
 }
 
 function heartRain(symbol){
-  for(let i = 0; i < 36; i++){
-    setTimeout(() => popHeart(symbol), i * 45);
-  }
+  for(let i = 0; i < 36; i++) setTimeout(() => popHeart(symbol), i * 45);
 }
 
 function shakeHeart(){
-  heartsEl.style.transform = "scale(1.25)";
-  heartsEl.style.color = "#ffdf5c";
+  globalHearts.style.transform = "scale(1.25)";
+  globalHearts.style.color = "#ffdf5c";
   setTimeout(() => {
-    heartsEl.style.transform = "scale(1)";
-    heartsEl.style.color = "white";
+    globalHearts.style.transform = "scale(1)";
+    globalHearts.style.color = "white";
   }, 250);
 }
 
 function resetGame(){
   clearInterval(timer);
-
   hearts = 100;
   selectedBet = 10;
   pinkBet = 0;
   blueBet = 0;
   timeLeft = 20;
   revealing = false;
-
   chooseBet(10);
   newRound();
   startAutoTimer();
-
   msg("รีเซ็ตแล้ว เกมเริ่มอัตโนมัติ วางหัวใจได้เลย 💖");
 }
 
+/* MEMORY GAME */
+let memFirst = null;
+let memSecond = null;
+let memLock = false;
+let memMatched = 0;
+let memMoves = 0;
+let memWonThisRound = false;
+
+function startMemory(){
+  memFirst = null;
+  memSecond = null;
+  memLock = false;
+  memMatched = 0;
+  memMoves = 0;
+  memWonThisRound = false;
+
+  const icons = ["💖","💙","💍","🌹","🐰","🐻","🍰","👑"];
+  const deck = [...icons, ...icons].sort(() => Math.random() - 0.5);
+  const grid = document.getElementById("memoryGrid");
+  grid.innerHTML = "";
+
+  deck.forEach(icon => {
+    const card = document.createElement("div");
+    card.className = "mem-card";
+    card.dataset.icon = icon;
+    card.innerText = "?";
+    card.onclick = () => openMemCard(card);
+    grid.appendChild(card);
+  });
+
+  updateMemoryUI();
+  document.getElementById("memoryMsg").innerText = "กดการ์ด 2 ใบเพื่อจับคู่ 💘";
+}
+
+function openMemCard(card){
+  if(memLock) return;
+  if(card.classList.contains("open") || card.classList.contains("done")) return;
+
+  card.classList.add("open");
+  card.innerText = card.dataset.icon;
+
+  if(!memFirst){
+    memFirst = card;
+    return;
+  }
+
+  memSecond = card;
+  memMoves++;
+  memLock = true;
+
+  if(memFirst.dataset.icon === memSecond.dataset.icon){
+    memFirst.classList.add("done");
+    memSecond.classList.add("done");
+    memMatched++;
+    document.getElementById("memoryMsg").innerText = "จับคู่สำเร็จ! 💖";
+    resetMemPick();
+    updateMemoryUI();
+
+    if(memMatched === 8 && !memWonThisRound){
+      memWonThisRound = true;
+      hearts += 100;
+      syncHearts();
+      heartRain("💖");
+      document.getElementById("memoryMsg").innerText = "ชนะแล้ว! ได้รับ 100 หัวใจ เอาไปเล่นเกมอื่นต่อได้ 🏆";
+    }
+  }else{
+    document.getElementById("memoryMsg").innerText = "ยังไม่ใช่คู่นี้ จำตำแหน่งไว้นะ";
+    setTimeout(() => {
+      memFirst.classList.remove("open");
+      memSecond.classList.remove("open");
+      memFirst.innerText = "?";
+      memSecond.innerText = "?";
+      resetMemPick();
+      updateMemoryUI();
+    }, 700);
+  }
+}
+
+function resetMemPick(){
+  memFirst = null;
+  memSecond = null;
+  memLock = false;
+}
+
+function updateMemoryUI(){
+  document.getElementById("memPair").innerText = memMatched + "/8";
+  document.getElementById("memMove").innerText = memMoves;
+  syncHearts();
+}
+
+/* BACKGROUND */
 function createBackground(){
   const bg = document.getElementById("bg");
-
   for(let i = 0; i < 38; i++){
     const f = document.createElement("div");
     f.className = "float";
@@ -639,9 +509,7 @@ function createBackground(){
 }
 
 createBackground();
-updateUI();
-startAutoTimer();
+syncHearts();
 </script>
-
 </body>
 </html>
